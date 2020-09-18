@@ -59,7 +59,8 @@ GPGKEY="${GPGKEY:-F6287B82CC84BCBD}"
 gpg --keyserver keyserver.ubuntu.com --recv-key $GPGKEY
 
 if [ $SHA256SUM == $SHA256SUMFILE ]; then
-    echo "SHA256sums match OK"
+    echo "File SHA256s match"
+    echo "Now checking the PGP signatures"
     # Do PGP verify
     # gpg --armor --output test.txt.sha256.asc --detach-sig test.txt.sha256
     if [ -f $(echo "${FILENAME}.sha256.asc") ]; then
@@ -67,7 +68,10 @@ if [ $SHA256SUM == $SHA256SUMFILE ]; then
         exit 0
     else
         echo "GPG signed sha256 file does not exist. Expected ${FILENAME}.sha256.asc signed by ${GPGKEY}"
-        exit 1
+        echo
+        echo "This isn't necessarily bad but it means that it wasn't signed at all."
+        echo
+        exit 0
     fi
 else
     echo "Not ok"
